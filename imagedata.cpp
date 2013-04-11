@@ -11,6 +11,8 @@ ImageData::ImageData(int width, int height) {
     height_ = height;
 }
 
+
+
 void ImageData::Load(QImage image) {
     /// Очищаем вектор значений
     values_.clear();

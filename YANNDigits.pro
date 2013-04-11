@@ -15,10 +15,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     imgframe.cpp \
-    imagedata.cpp
+    imagedata.cpp \
+    mnistdataset.cpp \
+    mnistiterator.cpp
 
 HEADERS  += mainwindow.h \
     imgframe.h \
-    imagedata.h
+    imagedata.h \
+    mnistdataset.h \
+    mnistiterator.h
 
 FORMS    += mainwindow.ui
