@@ -27,12 +27,19 @@ void ImageData::Load(QImage image) {
     }
 }
 
-/// Функция загрузки значений из массива
-void ImageData::Load(int *array, int array_length) {
+/// Функция загрузки значений из массива в порядке Little Endian
+void ImageData::LoadLSBFirst(unsigned char *array, int array_length) {
     values_.clear();
     for (int index = 0; index < array_length; ++index) {
-        values_.push_back(*array);
-        ++array;
+        values_.push_back(array[index]);
+    }
+}
+
+/// Функция загрузки значения из массива в порядке Big Endian
+void ImageData::LoadMSBFirst(unsigned char *array, int array_length) {
+    values_.clear();
+    for (int index = array_length - 1; index > -1; --index) {
+        values_.push_back(array[index]);
     }
 }
 

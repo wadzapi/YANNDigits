@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "imagedata.h"
 #include "imgframe.h"
+#include "mnistdataset.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -18,9 +19,12 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::onRecognize() {
-    QImage image(ui->frame->GetCroppedImage());
-    ImageData image_data;
-    int arr[6] = {10, 11, 12, 13, 14, 15};
-    image_data.Load(arr, 6);
-    ui->frame->SetImage(image_data.getQImage());
+    MnistDataset training_set;
+    training_set.Load("train-images.idx3-ubyte", "train-labels.idx1-ubyte");
+    //training_set.Load()
+    //QImage image(ui->frame->GetCroppedImage());
+    //ImageData image_data;
+    //int arr[6] = {10, 11, 12, 13, 14, 15};
+    //(arr, 6);
+    //ui->frame->SetImage(image_data.getQImage());
 }

@@ -13,16 +13,18 @@ public:
     ImageData(int width, int height);
     int GetLength();
     void Load(QImage image);
-    void Load(int *array, int array_length);
+    void LoadMSBFirst(unsigned char *array, int array_length);
+    void LoadLSBFirst(unsigned char *array, int array_length);
+
     QImage getQImage();
     unsigned int Label();
 
 
 private:
-    std::vector<uint> values_;
-    unsigned int width_;
-    unsigned int height_;
-    unsigned int label_;
+    std::vector<unsigned char> values_;
+    int width_;
+    int height_;
+    //int label_;
 
 };
 
