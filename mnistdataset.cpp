@@ -74,7 +74,7 @@ bool MnistDataset::LoadImages(const char *images_path) {
     ImageData image;
     while (!feof(images_file)) {
         fread(image_array, sizeof(unsigned char), pixels_num, images_file);
-        image.LoadMSBFirst(image_array, pixels_num);
+        image.Load(image_array, pixels_num);
         mnist_images.push_back(image);
         ++images_counter;
     }

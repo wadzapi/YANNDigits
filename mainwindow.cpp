@@ -19,12 +19,9 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::onRecognize() {
-    MnistDataset training_set;
-    training_set.Load("train-images.idx3-ubyte", "train-labels.idx1-ubyte");
-    //training_set.Load()
-    //QImage image(ui->frame->GetCroppedImage());
-    //ImageData image_data;
-    //int arr[6] = {10, 11, 12, 13, 14, 15};
-    //(arr, 6);
-    //ui->frame->SetImage(image_data.getQImage());
+    QImage image(ui->frame->GetCroppedImage());
+    ImageData image_data;
+    image_data.Load(image);
+    ImageData datacopy = image_data;
+    ui->frame->SetImage(datacopy.getQImage());
 }

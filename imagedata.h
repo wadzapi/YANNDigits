@@ -2,7 +2,6 @@
 #define IMAGEDATA_H
 
 #include <QImage>
-#include <vector>
 
 /** Класс для хранения и передачи информации об изображении
  */
@@ -11,21 +10,23 @@ class ImageData
 public:
     ImageData();
     ImageData(int width, int height);
-    int GetLength();
-    void Load(QImage image);
-    void LoadMSBFirst(unsigned char *array, int array_length);
-    void LoadLSBFirst(unsigned char *array, int array_length);
-
+    ImageData(const ImageData& image_data);
+    ~ImageData();
+    int GetSize();
+    bool Load(QImage image);
+    bool Load(unsigned char* array, int array_length);
     QImage getQImage();
-    unsigned int Label();
+    unsigned char& operator[](const int index);
+    const ImageData& operator=(const ImageData &image_data);
+
 
 
 private:
-    std::vector<unsigned char> values_;
+    static const int kDefaultWidth;
+    static const int kDefaultHeight;
+    unsigned char* data_;
     int width_;
     int height_;
-    //int label_;
-
 };
 
 #endif // IMAGEDATA_H

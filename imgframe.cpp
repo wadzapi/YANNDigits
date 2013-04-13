@@ -5,6 +5,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 
+
 ImgFrame::ImgFrame(QWidget *parent) :
     QFrame(parent) {
     InitFrame();
@@ -26,9 +27,12 @@ QImage ImgFrame::GetImage() const {
 }
 
 void ImgFrame::SetImage(const QImage &image) {
-    //image.save("test.jpg", "JPEG");
-    //image_ = image.convertToFormat(QImage::Format_RGB888);
-    //update();
+    /// Масштабирование картинки
+    QImage scaled_image = image.scaled(image.size());
+    /// Копируем содержимое
+    QPainter painter(&image_);
+    painter.drawImage(image_.rect(), scaled_image);
+    update();
 }
 
 void ImgFrame::ClearFrame() {
