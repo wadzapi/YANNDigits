@@ -9,8 +9,11 @@ unsigned int MnistDataset::Count() const {
     return num_images_;
 }
 
+
+
 inline void MnistDataset::SwapEndian(int &value) {
-    value = (value >> 24) | ((value << 8) & 0x00FF0000) | ((value >> 8) & 0x0000FF00) | (value << 24);
+   value = (value >> 24) | ((value << 8) & 0x00FF0000) | ((value >> 8) & 0x0000FF00) | (value << 24);
+
 }
 
 bool MnistDataset::Load(const char *images_path, const char *labels_path) {
