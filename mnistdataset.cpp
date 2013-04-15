@@ -1,28 +1,34 @@
 #include "mnistdataset.h"
 #include <cstdio>
 
-MnistDataset::MnistDataset() : dataset_(NULL) {
+MnistDataset::MnistDataset() : is_images_loaded(false), is_labels_loaded(false) {
 
+}
+
+void MnistDataset::DeleteImages() {
+    if (is_images_loaded) {
+        for (int i = 0; i < num_images_; i++) {
+            delete images_[i];
+        }
+        delete[] images_;
+        is_images_loaded = false;
+    }
+}
+
+void MnistDataset::DeleteLabels() {
+    if (is_labels_loaded) {
+        delete[] labels_;
+        is_labels_loaded = false;
+    }
 }
 
 MnistDataset::~MnistDataset() {
-    if (dataset_ != NULL) {
-        for (int i = 0; i < num_images_; i++) {
-            delete dataset_[i];
-        }
-        delete[] dataset_;
-    }
-}
-
-void MnistDataset::Load(const char *images_path, const char *labels_path) {
-    /// Загружаем массив картинок и массив меток
-    images_loaded = LoadImages(images_path);
-    if (images_loaded) {
-        labels_loaded = LoadLabels(labels_path);
-    }
+    DeleteImages();
+    DeleteLabels();
 }
 
 bool MnistDataset::LoadLabels(const char *labels_path) {
+    DeleteLabels();
     FILE* labels_file = fopen(labels_path, "rb");
     if (labels_file == NULL)
         return false;
@@ -38,13 +44,14 @@ bool MnistDataset::LoadLabels(const char *labels_path) {
     int labels_read = 0;
     labels_read = fread(labels_, sizeof(unsigned char), num_labels_, labels_file);
     fclose(labels_file);
-    if (labels_read == num_labels_)
-        return true;
-    else
+    if (labels_read != num_labels_)
         return false;
+    is_labels_loaded = true;
+    return true;
 }
 
 bool MnistDataset::LoadImages(const char *images_path) {
+    DeleteImages();
     FILE* images_file = fopen(images_path, "rb");
     if (images_file == NULL)
         return false;
@@ -62,7 +69,7 @@ bool MnistDataset::LoadImages(const char *images_path) {
     fread(&num_cols_, sizeof(__int32), 1, images_file);
     SwapEndian(num_cols_);
     /// Инициализация массива данных
-    dataset_ = new ImageData*[num_images_];
+    images_ = new ImageData*[num_images_];
     int buff_size = num_cols_ * num_rows_;
     unsigned char buffer[buff_size];
     for (int i = 0; i < num_images_; ++i) {
@@ -71,15 +78,20 @@ bool MnistDataset::LoadImages(const char *images_path) {
             return false;
         }
         fread(buffer, sizeof(unsigned char), buff_size, images_file);
-        dataset_[i] = new ImageData(num_cols_, num_rows_);
-        dataset_[i]->Load(buffer, buff_size);
+        images_[i] = new ImageData(num_cols_, num_rows_);
+        images_[i]->Load(buffer, buff_size);
     }
     fclose(images_file);
+    is_images_loaded = true;
     return true;
 }
 
-ImageData *MnistDataset::Get(int index) {
-    return dataset_[index];
+ImageData *MnistDataset::GetImage(int index) {
+    return images_[index];
+}
+
+unsigned char MnistDataset::GetLabel(int index) {
+    return labels_[index];
 }
 
 unsigned int MnistDataset::Count() const {

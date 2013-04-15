@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 
+#include "mnistdataset.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -18,12 +20,13 @@ public:
 private:
     void ConfigureUI();
     Ui::MainWindow *ui;
+    MnistDataset mnist_;
+
 
 public slots:
-    void onRecognize();
-    void onLoadImages();
-    void onLoadLabels();
-
+    void Recognize();
+    void MnistImagesOpen();
+    void MnistLabelsOpen();
 
 };
 
