@@ -15,6 +15,7 @@ void ImgFrame::InitFrame() {
     this->setMouseTracking(true);
     is_painting_ = false;
     is_erasing_ = false;
+    is_editable_ = false;
     /// установка цветовой схемы по умолчанию
     background_color_ = QColor(Qt::black);
     pen_color_ = QColor(Qt::white);
@@ -71,16 +72,18 @@ bool ImgFrame::OpenImage(const QString &file_name) {
 }
 
 void ImgFrame::PaintToImage() {
-    QPainter painter(&image_);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    if (is_painting_)
-        painter.setPen(QPen(pen_color_, pen_width_, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    else if (is_erasing_)
-        painter.setPen(QPen(background_color_, pen_width_, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-    if (end_point_ == start_point_) {
-        painter.drawPoint(end_point_);
-    } else {
-        painter.drawLine(start_point_, end_point_);
+    if (is_editable_) {
+        QPainter painter(&image_);
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        if (is_painting_)
+            painter.setPen(QPen(pen_color_, pen_width_, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        else if (is_erasing_)
+            painter.setPen(QPen(background_color_, pen_width_, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        if (end_point_ == start_point_) {
+            painter.drawPoint(end_point_);
+        } else {
+            painter.drawLine(start_point_, end_point_);
+        }
     }
 }
 

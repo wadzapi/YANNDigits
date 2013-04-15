@@ -16,10 +16,14 @@ public:
     ~MainWindow();
     
 private:
+    void ConfigureUI();
     Ui::MainWindow *ui;
 
 public slots:
     void onRecognize();
+    void onLoadImages();
+    void onLoadLabels();
+
 
 };
 

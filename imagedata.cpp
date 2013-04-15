@@ -5,19 +5,19 @@
 const int ImageData::kDefaultHeight = 28;
 const int ImageData::kDefaultWidth = 28;
 
-ImageData::ImageData(int width, int height) {
-    width_ = width;
-    height_ = height;
+ImageData::ImageData() : data_(NULL) {
+}
+
+ImageData::ImageData(int width = kDefaultWidth, int height = kDefaultHeight)
+    : width_(width),
+      height_(height),
+      data_(NULL)
+{
     data_ = new unsigned char[width_ * height_];
 }
 
-ImageData::ImageData() {
-    width_ = kDefaultWidth;
-    height_ = kDefaultWidth;
-    data_ = new unsigned char[width_ * height_];
-}
-
-ImageData::ImageData(const ImageData &image_data) {
+ImageData::ImageData(const ImageData &image_data)
+{
     if (this != &image_data) {
         width_ = image_data.width_;
         height_ = image_data.height_;
@@ -25,7 +25,6 @@ ImageData::ImageData(const ImageData &image_data) {
         this->Load(image_data.data_, width_* height_);
     }
 }
-
 
 unsigned char& ImageData::operator[](const int index) {
     return data_[index];
@@ -43,10 +42,11 @@ const ImageData& ImageData::operator =(const ImageData& image_data) {
 }
 
 ImageData::~ImageData() {
-    delete[] data_;
+    if (data_ != NULL)
+        delete[] data_;
 }
 
-bool ImageData::Load(QImage image) {
+void ImageData::Load(QImage image) {
     QImage scaled_image;
     /// Масштабирование к необходимому формату
     scaled_image = image.scaled(width_, height_, Qt::IgnoreAspectRatio);
@@ -56,21 +56,19 @@ bool ImageData::Load(QImage image) {
             data_[y * width_ + x] = static_cast<unsigned char>(qGray(scaled_image.pixel(x,y)));
         }
     }
-    return true;
 }
 
 /// Функция загрузки значений из массива
-bool ImageData::Load(unsigned char *array, int array_length) {
+void ImageData::Load(unsigned char *array, int array_length) {
     int length = width_ * height_;
     if (array_length > length) {
-        return false;
+        memcpy(data_, array, length * sizeof(unsigned char));
     }
-    memcpy(data_, array, length * sizeof(unsigned char));
-    return true;
+    memcpy(data_, array, array_length * sizeof(unsigned char));
 }
 
 /// Функция получения картинки
-QImage ImageData::getQImage() {
+QImage ImageData::GetQImage() {
     QImage image(width_, height_, QImage::Format_ARGB32);
     int pixels = width_ * height_;
     if (image.byteCount() >= pixels * (int)sizeof(QRgb)) {

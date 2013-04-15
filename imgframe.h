@@ -22,6 +22,7 @@ public:
     bool OpenImage(const QString &file_name);
     QSize GetSize() const;
     QRect GetBounds() const;
+    bool is_editable_;
 
 
 protected:
