@@ -9,6 +9,7 @@ class Counter : public QObject
 public:
     explicit Counter(QObject *parent = 0);
     unsigned int GetValue();
+    unsigned int GetIndex();
     void Init(unsigned int min_value, unsigned int max_value);
     bool IsInit();
     unsigned int MaxValue();

@@ -45,7 +45,7 @@ void MainWindow::MnistImagesOpen() {
         images_counter_.Init(1, mnist_.ImagesCount());
         images_counter_.SetLooped(true);
         ui->label_3->setText(QString::number(images_counter_.MaxValue()));
-        LoadMnistImage(images_counter_.GetValue());
+        LoadMnistImage();
     }
 }
 
@@ -59,41 +59,40 @@ void MainWindow::MnistLabelsOpen() {
         labels_counter_.Init(1, mnist_.LabelsCount());
         labels_counter_.SetLooped(true);
         ui->label_17->setText(QString::number(labels_counter_.MaxValue()));
-        LoadMnistLabel(labels_counter_.GetValue());
+        LoadMnistLabel();
     }
 }
 
 void MainWindow::Recognize() {
     ;
-
 }
 
 void MainWindow::NextMnist() {
     images_counter_.Next();
-    LoadMnistImage(images_counter_.GetValue());
+    LoadMnistImage();
     labels_counter_.Next();
-    LoadMnistLabel(labels_counter_.GetValue());
+    LoadMnistLabel();
 }
 
 void MainWindow::PrevMnist() {
     images_counter_.Prev();
-    LoadMnistImage(images_counter_.GetValue());
+    LoadMnistImage();
     labels_counter_.Prev();
-    LoadMnistLabel(labels_counter_.GetValue());
+    LoadMnistLabel();
 }
 
-void MainWindow::LoadMnistImage(unsigned int index) {
+void MainWindow::LoadMnistImage() {
     if (mnist_.IsImagesLoaded()) {
-        QImage new_image = mnist_.GetImage(index)->GetQImage();
-        this->ui->frame_2->SetImage(new_image);
-        this->ui->label_2->setText(QString::number(index));
+        QImage new_image = mnist_.GetImage(images_counter_.GetIndex())->GetQImage();
+        ui->frame_2->SetImage(new_image);
+        ui->label_2->setText(QString::number(images_counter_.GetValue()));
     }
 }
 
-void MainWindow::LoadMnistLabel(unsigned int index) {
+void MainWindow::LoadMnistLabel() {
     if (mnist_.IsLabelsLoaded()) {
-        QChar label_char = QChar::fromLatin1(mnist_.GetLabel(index));
-        this->ui->label_4->setText(QString(label_char));
-        this->ui->label_15->setText(QString::number(index));
+        QString label_string = QString::number(static_cast<int>(mnist_.GetLabel(labels_counter_.GetIndex())));
+        this->ui->label_4->setText(QString(label_string));
+        this->ui->label_15->setText(QString::number(labels_counter_.GetValue()));
     }
 }

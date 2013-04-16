@@ -20,8 +20,8 @@ public:
 private:
     void ConfigureUI();
     void initCounter();
-    void LoadMnistImage(unsigned int index);
-    void LoadMnistLabel(unsigned int index);
+    void LoadMnistImage();
+    void LoadMnistLabel();
     Ui::MainWindow *ui;
     MnistDataset mnist_;
     Counter images_counter_;

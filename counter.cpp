@@ -23,6 +23,10 @@ unsigned int Counter::GetValue() {
     return current_value_;
 }
 
+unsigned int Counter::GetIndex() {
+    return current_value_ - min_value_;
+}
+
 unsigned int Counter::MaxValue() {
     return max_value_;
 }
@@ -42,12 +46,12 @@ void Counter::SetValue(unsigned int value) {
         unsigned int num_elements = Size();
         if (value < min_value_) {
             if (is_looped_)
-                current_value_ = max_value_ - ((min_value_ - value) % num_elements);
+                current_value_ = max_value_  - ((min_value_ - value) % num_elements) + 1;
             else
                 current_value_ = min_value_;
         } else if (value > max_value_) {
             if (is_looped_)
-                current_value_ = min_value_ + ((value - max_value_) % num_elements);
+                current_value_ = min_value_  + ((value - max_value_) % num_elements) - 1;
             else
                 current_value_ = max_value_;
         } else {
