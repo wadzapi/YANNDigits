@@ -10,13 +10,16 @@ public:
     ~MnistDataset();
     void Load(const char* images_path, const char* labels_path);
     /// Функции интерфейса агрегатора
-    unsigned int Count() const;
+    int ImagesCount() const;
+    int LabelsCount() const;
     ImageData* GetImage(int index);
     unsigned char GetLabel(int index);
     /// Чтение меток из файла
     bool LoadLabels(const char* labels_path);
     /// Чтение данных изображения из файла
     bool LoadImages(const char* images_path);
+    bool IsImagesLoaded();
+    bool IsLabelsLoaded();
 
 
 private:

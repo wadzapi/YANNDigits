@@ -16,11 +16,13 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     imgframe.cpp \
     imagedata.cpp \
-    mnistdataset.cpp
+    mnistdataset.cpp \
+    counter.cpp
 
 HEADERS  += mainwindow.h \
     imgframe.h \
     imagedata.h \
-    mnistdataset.h
+    mnistdataset.h \
+    counter.h
 
 FORMS    += mainwindow.ui

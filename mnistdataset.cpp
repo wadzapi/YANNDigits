@@ -1,9 +1,16 @@
 #include "mnistdataset.h"
 #include <cstdio>
 
-MnistDataset::MnistDataset() : is_images_loaded(false), is_labels_loaded(false) {
-
-}
+MnistDataset::MnistDataset() :
+    is_images_loaded(false),
+    is_labels_loaded(false),
+    images_magic_number(0),
+    labels_magic_number(0),
+    num_images_(0),
+    num_labels_(0),
+    num_rows_(0),
+    num_cols_(0)
+{}
 
 void MnistDataset::DeleteImages() {
     if (is_images_loaded) {
@@ -12,6 +19,8 @@ void MnistDataset::DeleteImages() {
         }
         delete[] images_;
         is_images_loaded = false;
+        num_images_ = 0;
+        images_magic_number = 0;
     }
 }
 
@@ -19,6 +28,8 @@ void MnistDataset::DeleteLabels() {
     if (is_labels_loaded) {
         delete[] labels_;
         is_labels_loaded = false;
+        num_labels_ = 0;
+        labels_magic_number = 0;
     }
 }
 
@@ -94,8 +105,20 @@ unsigned char MnistDataset::GetLabel(int index) {
     return labels_[index];
 }
 
-unsigned int MnistDataset::Count() const {
+int MnistDataset::ImagesCount() const {
     return num_images_;
+}
+
+int MnistDataset::LabelsCount() const {
+    return num_labels_;
+}
+
+bool MnistDataset::IsImagesLoaded() {
+    return is_images_loaded;
+}
+
+bool MnistDataset::IsLabelsLoaded() {
+    return is_labels_loaded;
 }
 
 inline void MnistDataset::SwapEndian(int &value) {
