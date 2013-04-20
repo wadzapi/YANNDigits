@@ -7,6 +7,10 @@
 #include <QString>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QStringList>
+#include <QTableWidgetItem>
+
+
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -14,7 +18,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow) {
     ui->setupUi(this);
     ConfigureUI();
-
+    ////
+    ann_.ConstructANN();
 }
 
 MainWindow::~MainWindow()
@@ -33,6 +38,7 @@ void MainWindow::ConfigureUI() {
     ui->lineEdit->setReadOnly(true);
     QObject::connect(ui->pushButton_6, SIGNAL(clicked()), this, SLOT(PrevMnist()));
     QObject::connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(NextMnist()));
+    QObject::connect(ui->spinBox, SIGNAL(valueChanged(int)), this, SLOT(AdjustTableRows(int)));
 }
 
 void MainWindow::MnistImagesOpen() {
@@ -95,4 +101,22 @@ void MainWindow::LoadMnistLabel() {
         this->ui->label_4->setText(QString(label_string));
         this->ui->label_15->setText(QString::number(labels_counter_.GetValue()));
     }
+}
+
+void MainWindow::AdjustTableRows(int numLayers) {
+    QTableWidget *table = this->ui->tableWidget;
+    table->clear();
+    table->setRowCount(numLayers);
+    QTableWidgetItem *item;
+    for (int i = 0; i < numLayers; ++i) {
+            item = new QTableWidgetItem();
+            item->setText(QString("Слой %1").arg(i+1));
+            item->setData(Qt::BackgroundColorRole, QColor("#c0c0c0"));
+            item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+            table->setItem(i, 0, item);
+            item = new QTableWidgetItem();
+            item->setText("20");
+            table->setItem(i, 1, item);
+    }
+    this->update();
 }

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "mnistdataset.h"
 #include "counter.h"
+#include "annrecognizer.h"
 
 namespace Ui {
 class MainWindow;
@@ -26,6 +27,7 @@ private:
     MnistDataset mnist_;
     Counter images_counter_;
     Counter labels_counter_;
+    ANNRecognizer ann_;
 
 
 
@@ -35,7 +37,7 @@ public slots:
     void PrevMnist();
     void MnistImagesOpen();
     void MnistLabelsOpen();
-
+    void AdjustTableRows(int numLayers);
 };
 
 #endif // MAINWINDOW_H

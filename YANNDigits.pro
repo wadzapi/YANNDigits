@@ -17,12 +17,31 @@ SOURCES += main.cpp\
     imgframe.cpp \
     imagedata.cpp \
     mnistdataset.cpp \
-    counter.cpp
+    counter.cpp \
+    annrecognizer.cpp
 
 HEADERS  += mainwindow.h \
     imgframe.h \
     imagedata.h \
     mnistdataset.h \
-    counter.h
+    counter.h \
+    annrecognizer.h
 
 FORMS    += mainwindow.ui
+
+
+
+win32: LIBS += -L$$PWD/third_party/fann/ -llibfann
+
+INCLUDEPATH += $$PWD/third_party/fann/include
+DEPENDPATH += $$PWD/third_party/fann/include
+
+win32: PRE_TARGETDEPS += $$PWD/third_party/fann/libfann.lib
+
+
+win32: LIBS += -L$$PWD/third_party/fann/ -llibdoublefann
+
+INCLUDEPATH += $$PWD/third_party/fann/include
+DEPENDPATH += $$PWD/third_party/fann/include
+
+win32: PRE_TARGETDEPS += $$PWD/third_party/fann/libdoublefann.lib
