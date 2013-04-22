@@ -40,6 +40,7 @@ void MainWindow::ConfigureUI() {
     QObject::connect(ui->pushButton_7, SIGNAL(clicked()), this, SLOT(CreateANN()));
     QObject::connect(ui->pushButton_8, SIGNAL(clicked()), this, SLOT(LoadANN()));
     QObject::connect(ui->pushButton_9, SIGNAL(clicked()), this, SLOT(SaveANN()));
+    QObject::connect(ui->pushButton_11, SIGNAL(clicked()), this, SLOT(LoadTrain()));
 }
 
 void MainWindow::MnistImagesOpen() {
@@ -71,7 +72,13 @@ void MainWindow::MnistLabelsOpen() {
 }
 
 void MainWindow::Recognize() {
-    ;
+    if (ann_.IsInit()) {
+        QImage frame_image = ui->frame_3->GetCroppedImage();
+        ImageData img_data(28,28);
+        img_data.Load(frame_image);
+        char recognized = ann_.Recognize(img_data);
+        ui->label_12->setText(QString::number(recognized));
+    }
 }
 
 void MainWindow::NextMnist() {
@@ -154,6 +161,12 @@ void MainWindow::SaveANN() {
     ann_.Save(file_name.toStdString());
 }
 
+void MainWindow::LoadTrain() {
+    if (!ann_.SetTrainingData(&mnist_)) {
+        ///Сообщение об ошибке
+    }
+}
+
 void MainWindow::StartTraining() {
     ///Задание параметров сети
     if (ann_.IsInit()) {
@@ -164,7 +177,6 @@ void MainWindow::StartTraining() {
         unsigned int max_epochs = ui->spinBox_2->value();
         unsigned int epochs_span = ui->spinBox_3->value();
         float desired_error = static_cast<float>(ui->doubleSpinBox_3->value());
-        ann_.SetTrainingData(&mnist_);
         ann_.Train(max_epochs, epochs_span, desired_error);
     }
 }

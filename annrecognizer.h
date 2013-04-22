@@ -21,6 +21,7 @@ public:
     void Save(const std::string config_file);
     FANN::neural_net net;
     bool IsInit();
+    unsigned char Recognize(ImageData& data);
 
 
 private:
@@ -32,7 +33,7 @@ private:
     void DeleteInputData();
     bool is_ann_init_;
     bool is_train_loaded_;
-
+    static unsigned int FindMaxItem(float* array, unsigned int arr_len);
 
 };
 

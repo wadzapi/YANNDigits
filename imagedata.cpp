@@ -47,7 +47,7 @@ ImageData::~ImageData() {
         delete[] data_;
 }
 
-void ImageData::Load(QImage image) {
+void ImageData::Load(QImage &image) {
     QImage scaled_image;
     /// Масштабирование к необходимому формату
     scaled_image = image.scaled(width_, height_, Qt::IgnoreAspectRatio);

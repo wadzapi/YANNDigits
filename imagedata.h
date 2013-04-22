@@ -13,7 +13,7 @@ public:
     ImageData(const ImageData& image_data);
     ~ImageData();
     int GetSize();
-    void Load(QImage image);
+    void Load(QImage &image);
     void Load(unsigned char* array, int array_length);
     QImage GetQImage();
     unsigned char& operator[](const int index);

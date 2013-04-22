@@ -45,6 +45,7 @@ public slots:
     void AdjustTableRows(int num_layers);
     void CreateANN();
     void LoadANN();
+    void LoadTrain();
     void SaveANN();
     void StartTraining();
 

@@ -3,8 +3,8 @@
 
 
 ANNRecognizer::ANNRecognizer() :
-    is_train_loaded_(false),
-    is_ann_init_(false)
+    is_ann_init_(false),
+    is_train_loaded_(false)
 {
 
 }
@@ -54,18 +54,12 @@ bool ANNRecognizer::SetTrainingData(MnistDataset *mnist) {
             output_train_values[i][label_value] = 1.0f;
         }
         train_data_.set_train_data(mnist_count_, num_input_, input_train_values, num_output_, output_train_values );
-        if (input_train_values != NULL) {
-            for (unsigned int i = 0; i < mnist_count_; ++i) {
-                delete[] input_train_values[i];
-            }
-            delete[] input_train_values;
+        for (unsigned int i = 0; i < mnist_count_; ++i) {
+            delete[] input_train_values[i];
+            delete[] output_train_values[i];
         }
-        if (output_train_values != NULL) {
-            for (unsigned int i = 0; i < mnist_count_; ++i) {
-                delete[] output_train_values[i];
-            }
-            delete[] output_train_values;
-        }
+        delete[] input_train_values;
+        delete[] output_train_values;
         is_train_loaded_ = true;
     }
     return is_train_loaded_;
@@ -90,4 +84,19 @@ void ANNRecognizer::Save(const std::string config_file) {
 
 bool ANNRecognizer::IsInit() {
     return is_ann_init_;
+}
+
+unsigned char ANNRecognizer::Recognize(ImageData &data) {
+    float* img_data = data.GetFloatData(0.0f, 1.0f);
+    float* out_array = net.run(img_data);
+    return FindMaxItem(out_array, num_output_);
+}
+
+unsigned int ANNRecognizer::FindMaxItem(float *array, unsigned int arr_len) {
+    unsigned int index_max = 0;
+    for (unsigned int index = 1; index < arr_len; ++index) {
+        if (array[index] > array[index_max])
+            index_max = index;
+    }
+    return index_max;
 }
