@@ -4,13 +4,13 @@
 MnistDataset::MnistDataset() :
     images_magic_number(0),
     labels_magic_number(0),
-    is_images_loaded(false),
-    is_labels_loaded(false),
     num_labels_(0),
     num_images_(0),
     num_rows_(0),
-    num_cols_(0)
-{}
+    num_cols_(0),
+    is_images_loaded(false),
+    is_labels_loaded(false) {
+}
 
 void MnistDataset::DeleteImages() {
     if (is_images_loaded) {

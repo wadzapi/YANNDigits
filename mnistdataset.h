@@ -40,8 +40,8 @@ private:
     /// Изменение порядка байтов little-endian <--> big-endian
     inline void SwapEndian(int &value);
     /// Информация из заголовочных файлов
-    int labels_magic_number;
     int images_magic_number;
+    int labels_magic_number;
     int num_labels_;
     int num_images_;
     int num_rows_;

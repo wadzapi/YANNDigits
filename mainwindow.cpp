@@ -177,6 +177,19 @@ void MainWindow::StartTraining() {
         unsigned int max_epochs = ui->spinBox_2->value();
         unsigned int epochs_span = ui->spinBox_3->value();
         float desired_error = static_cast<float>(ui->doubleSpinBox_3->value());
+        //ann_.Train(max_epochs, epochs_span, desired_error);
+        /////Обучение и сохранение различных конфигрураций
+        ann_.net.create_standard(3, 28*28, 500, 10);
         ann_.Train(max_epochs, epochs_span, desired_error);
+        ann_.Save("1hidd500.conf");
+        ann_.net.create_standard(4, 28*28, 250, 250, 10);
+        ann_.Train(max_epochs, epochs_span, desired_error);
+        ann_.Save("2hidd250.conf");
+        ann_.net.create_standard(4, 28*28, 500, 500, 10);
+        ann_.Train(max_epochs, epochs_span, desired_error);
+        ann_.Save("2hidd500.conf");
+        ann_.net.create_standard(5, 28*28, 250, 250, 250, 10);
+        ann_.Train(max_epochs, epochs_span, desired_error);
+        ann_.Save("1hidd500.conf");
     }
 }
