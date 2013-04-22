@@ -1,8 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "imagedata.h"
 #include "imgframe.h"
-#include "mnistdataset.h"
+
 
 #include <QString>
 #include <QFileDialog>
@@ -18,8 +17,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow) {
     ui->setupUi(this);
     ConfigureUI();
-    ////
-    ann_.ConstructANN();
 }
 
 MainWindow::~MainWindow()
@@ -29,7 +26,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::ConfigureUI() {
     this->ui->frame_3->is_editable_ = true;
-    this->ui->lineEdit->
+    AdjustTableRows(ui->spinBox->value());
     QObject::connect(ui->pushButton, SIGNAL(clicked()), ui->frame_3, SLOT(ClearFrame()));
     QObject::connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(Recognize()));
     QObject::connect(ui->pushButton_4, SIGNAL(clicked()), this, SLOT(MnistImagesOpen()));
@@ -39,6 +36,10 @@ void MainWindow::ConfigureUI() {
     QObject::connect(ui->pushButton_6, SIGNAL(clicked()), this, SLOT(PrevMnist()));
     QObject::connect(ui->pushButton_3, SIGNAL(clicked()), this, SLOT(NextMnist()));
     QObject::connect(ui->spinBox, SIGNAL(valueChanged(int)), this, SLOT(AdjustTableRows(int)));
+    QObject::connect(ui->pushButton_10, SIGNAL(clicked()), this, SLOT(StartTraining()));
+    QObject::connect(ui->pushButton_7, SIGNAL(clicked()), this, SLOT(CreateANN()));
+    QObject::connect(ui->pushButton_8, SIGNAL(clicked()), this, SLOT(LoadANN()));
+    QObject::connect(ui->pushButton_9, SIGNAL(clicked()), this, SLOT(SaveANN()));
 }
 
 void MainWindow::MnistImagesOpen() {
@@ -103,12 +104,13 @@ void MainWindow::LoadMnistLabel() {
     }
 }
 
-void MainWindow::AdjustTableRows(int numLayers) {
-    QTableWidget *table = this->ui->tableWidget;
-    table->clear();
-    table->setRowCount(numLayers);
-    QTableWidgetItem *item;
-    for (int i = 0; i < numLayers; ++i) {
+void MainWindow::AdjustTableRows(int num_layers) {
+    if (num_layers > 2) {
+        QTableWidget *table = this->ui->tableWidget;
+        table->clear();
+        table->setRowCount(num_layers);
+        QTableWidgetItem *item;
+        for (int i = 0; i < num_layers; ++i) {
             item = new QTableWidgetItem();
             item->setText(QString("Слой %1").arg(i+1));
             item->setData(Qt::BackgroundColorRole, QColor("#c0c0c0"));
@@ -117,6 +119,52 @@ void MainWindow::AdjustTableRows(int numLayers) {
             item = new QTableWidgetItem();
             item->setText("20");
             table->setItem(i, 1, item);
+        }
+        table->item(0, 1)->setText(QString::number(28*28));
+        table->item(num_layers - 1, 1)->setText(QString::number(10));
+        this->update();
     }
-    this->update();
+}
+
+void MainWindow::CreateANN() {
+    ///Чтение параметров из формы GUI
+    unsigned int layers_num = ui->spinBox->value();
+    unsigned int capacity[layers_num];
+    capacity[0] = 28 * 28;
+    capacity[layers_num - 1] = 10;
+    for (unsigned int i = 1; i < layers_num - 1; ++i) {
+       QString text =  ui->tableWidget->item(i, 1)->text();
+       int value = text.toInt();
+       if (value < 0)
+           value *= -1;
+       capacity[i] = value;
+    }
+    ann_.ConstructANN(layers_num, capacity);
+}
+
+void MainWindow::LoadANN() {
+    QString file_name = QFileDialog::getOpenFileName(this,tr("Открыть файл нейронной сети..."), ".", "Файл нейронной сети");
+    if (!ann_.Load(file_name.toStdString())) {
+        //сообщение об ошибке
+    }
+}
+
+void MainWindow::SaveANN() {
+    QString file_name = QFileDialog::getSaveFileName(this, tr("Сохранить файл нейронной сети..."), ".", "Файл нейронной сети");
+    ann_.Save(file_name.toStdString());
+}
+
+void MainWindow::StartTraining() {
+    ///Задание параметров сети
+    if (ann_.IsInit()) {
+        float learn_rate = static_cast<float>(ui->doubleSpinBox->value());
+        ann_.net.set_learning_rate(learn_rate);
+        float momentum = static_cast<float>(ui->doubleSpinBox_2->value());
+        ann_.net.set_learning_momentum(momentum);
+        unsigned int max_epochs = ui->spinBox_2->value();
+        unsigned int epochs_span = ui->spinBox_3->value();
+        float desired_error = static_cast<float>(ui->doubleSpinBox_3->value());
+        ann_.SetTrainingData(&mnist_);
+        ann_.Train(max_epochs, epochs_span, desired_error);
+    }
 }

@@ -2,12 +2,12 @@
 #include <cstdio>
 
 MnistDataset::MnistDataset() :
-    is_images_loaded(false),
-    is_labels_loaded(false),
     images_magic_number(0),
     labels_magic_number(0),
-    num_images_(0),
+    is_images_loaded(false),
+    is_labels_loaded(false),
     num_labels_(0),
+    num_images_(0),
     num_rows_(0),
     num_cols_(0)
 {}
@@ -123,6 +123,14 @@ bool MnistDataset::IsLabelsLoaded() {
 
 inline void MnistDataset::SwapEndian(int &value) {
    value = (value >> 24) | ((value << 8) & 0x00FF0000) | ((value >> 8) & 0x0000FF00) | (value << 24);
+}
+
+int MnistDataset::Rows() {
+    return num_rows_;
+}
+
+int MnistDataset::Cols() {
+    return num_cols_;
 }
 
 

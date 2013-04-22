@@ -18,13 +18,14 @@ public:
     QImage GetQImage();
     unsigned char& operator[](const int index);
     const ImageData& operator=(const ImageData &image_data);
-
+    float* GetFloatData(float min_val, float max_val) const;
+    double* GetDoubleData(double min_val, double max_val) const;
 
 
 
 private:
-    static const int kDefaultWidth;
-    static const int kDefaultHeight;
+    static const int kMaxValue;
+    static const int kMinValue;
     int width_;
     int height_;
     unsigned char* data_;

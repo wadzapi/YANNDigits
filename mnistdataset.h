@@ -3,6 +3,11 @@
 #include "imagedata.h"
 #include <cstdio>
 
+enum MnistType {
+    kMnistTrain,
+    kMnistTest
+};
+
 class MnistDataset
 {
 public:
@@ -20,6 +25,8 @@ public:
     bool LoadImages(const char* images_path);
     bool IsImagesLoaded();
     bool IsLabelsLoaded();
+    int Rows();
+    int Cols();
 
 
 private:

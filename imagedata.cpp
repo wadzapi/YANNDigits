@@ -1,14 +1,15 @@
 #include "imagedata.h"
 #include <QColor>
 #include <cstring>
+#include <math.h>
 
-const int ImageData::kDefaultHeight = 28;
-const int ImageData::kDefaultWidth = 28;
+const int ImageData::kMaxValue = 255;
+const int ImageData::kMinValue = 0;
 
 ImageData::ImageData() : data_(NULL) {
 }
 
-ImageData::ImageData(int width = kDefaultWidth, int height = kDefaultHeight)
+ImageData::ImageData(int width, int height)
     : width_(width),
       height_(height),
       data_(NULL)
@@ -86,6 +87,25 @@ int ImageData::GetSize() {
     return width_ * height_;
 }
 
+float* ImageData::GetFloatData(float min_val, float max_val) const {
+    int data_length = width_ * height_;
+    float* float_data = new float[data_length];
+    float scale_factor = (max_val - min_val) / (float)(kMaxValue - kMinValue);
+    for (int i = 0; i < data_length; ++i) {
+        float_data[i] = (float)data_[i] * scale_factor;
+    }
+    return float_data;
+}
+
+double* ImageData::GetDoubleData(double min_val, double max_val) const {
+    int data_length = width_ * height_;
+    double* double_data = new double[data_length];
+    double scale_factor = (max_val - min_val) / (double)(kMaxValue - kMinValue);
+    for (int i = 0; i < data_length; ++i) {
+        double_data[i] = (double)data_[i] * scale_factor;
+    }
+    return double_data;
+}
 
 
 

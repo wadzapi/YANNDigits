@@ -2,9 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "mnistdataset.h"
 #include "counter.h"
+#include "mnistdataset.h"
 #include "annrecognizer.h"
+#include <QTableWidgetItem>
+
 
 namespace Ui {
 class MainWindow;
@@ -24,10 +26,13 @@ private:
     void LoadMnistImage();
     void LoadMnistLabel();
     Ui::MainWindow *ui;
-    MnistDataset mnist_;
     Counter images_counter_;
     Counter labels_counter_;
+    MnistDataset mnist_;
     ANNRecognizer ann_;
+    void SetActivationFunc();
+    void SetErrorFunc();
+
 
 
 
@@ -37,7 +42,13 @@ public slots:
     void PrevMnist();
     void MnistImagesOpen();
     void MnistLabelsOpen();
-    void AdjustTableRows(int numLayers);
+    void AdjustTableRows(int num_layers);
+    void CreateANN();
+    void LoadANN();
+    void SaveANN();
+    void StartTraining();
+
+
 };
 
 #endif // MAINWINDOW_H
