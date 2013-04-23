@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "imgframe.h"
+#include <sstream>
 
 
 #include <QString>
@@ -40,7 +41,10 @@ void MainWindow::ConfigureUI() {
     QObject::connect(ui->pushButton_7, SIGNAL(clicked()), this, SLOT(CreateANN()));
     QObject::connect(ui->pushButton_8, SIGNAL(clicked()), this, SLOT(LoadANN()));
     QObject::connect(ui->pushButton_9, SIGNAL(clicked()), this, SLOT(SaveANN()));
-    QObject::connect(ui->pushButton_11, SIGNAL(clicked()), this, SLOT(LoadTrain()));
+    QObject::connect(ui->pushButton_11, SIGNAL(clicked()), this, SLOT(LoadTrainFromMNIST()));
+    QObject::connect(ui->pushButton_13, SIGNAL(clicked()), this, SLOT(LoadTrainFromFile()));
+    QObject::connect(ui->pushButton_12, SIGNAL(clicked()), this, SLOT(SaveTrainToFile()));
+    QObject::connect(ui->pushButton_14, SIGNAL(clicked()), this, SLOT(StopTraining()));
 }
 
 void MainWindow::MnistImagesOpen() {
@@ -72,11 +76,14 @@ void MainWindow::MnistLabelsOpen() {
 }
 
 void MainWindow::Recognize() {
-    if (ann_.IsInit()) {
+    if (ann_.IsAnnInit()) {
         QImage frame_image = ui->frame_3->GetCroppedImage();
         ImageData img_data(28,28);
         img_data.Load(frame_image);
-        char recognized = ann_.Recognize(img_data);
+        //ImageData* img_data = mnist_.GetImage(0);
+        //ui->frame_3->SetImage(img_data->GetQImage());
+        //unsigned char recognized = ann_.Recognize(*img_data);
+        unsigned char recognized = ann_.Recognize(img_data);
         ui->label_12->setText(QString::number(recognized));
     }
 }
@@ -151,25 +158,37 @@ void MainWindow::CreateANN() {
 
 void MainWindow::LoadANN() {
     QString file_name = QFileDialog::getOpenFileName(this,tr("Открыть файл нейронной сети..."), ".", "Файл нейронной сети");
-    if (!ann_.Load(file_name.toStdString())) {
-        //сообщение об ошибке
+    if (!ann_.LoadANN(file_name.toStdString())) {
+        QMessageBox::warning(this, tr("Ошибка загрузки нейронной сети из файла "), tr("Произошла ошибка при загрузке нейронной сети из файла. Попробуйте выбрать другой файл."), QMessageBox::Ok );
     }
 }
 
 void MainWindow::SaveANN() {
     QString file_name = QFileDialog::getSaveFileName(this, tr("Сохранить файл нейронной сети..."), ".", "Файл нейронной сети");
-    ann_.Save(file_name.toStdString());
+    ann_.SaveANN(file_name.toStdString());
 }
 
-void MainWindow::LoadTrain() {
+void MainWindow::LoadTrainFromMNIST() {
     if (!ann_.SetTrainingData(&mnist_)) {
-        ///Сообщение об ошибке
+        QMessageBox::warning(this, tr("Ошибка загрузки данных изображений MNIST"), tr("Произошла ошибка загрузки данных изображений MNIST. Загрузите базу MNIST."), QMessageBox::Ok );
     }
+}
+
+void MainWindow::LoadTrainFromFile() {
+    QString file_name = QFileDialog::getOpenFileName(this,tr("Открыть тренировочную выборку..."), ".", "Файл тренировочной выборки");
+    if (!ann_.LoadTrain(file_name.toStdString())) {
+        QMessageBox::warning(this, tr("Ошибка загрузки данных тренировочной выборки"), tr("Произошла ошибка загрузки данных тренировочной выборки. Попробуйте выбрать другой файл."), QMessageBox::Ok );
+    }
+}
+
+void MainWindow::SaveTrainToFile() {
+    QString file_name = QFileDialog::getSaveFileName(this, tr("Сохранить тренировочную выборку..."), ".", "Файл тренировочной выборки");
+    ann_.SaveTrain(file_name.toStdString());
 }
 
 void MainWindow::StartTraining() {
     ///Задание параметров сети
-    if (ann_.IsInit()) {
+    if (ann_.IsAnnInit()) {
         float learn_rate = static_cast<float>(ui->doubleSpinBox->value());
         ann_.net.set_learning_rate(learn_rate);
         float momentum = static_cast<float>(ui->doubleSpinBox_2->value());
@@ -178,18 +197,56 @@ void MainWindow::StartTraining() {
         unsigned int epochs_span = ui->spinBox_3->value();
         float desired_error = static_cast<float>(ui->doubleSpinBox_3->value());
         //ann_.Train(max_epochs, epochs_span, desired_error);
+
         /////Обучение и сохранение различных конфигрураций
         ann_.net.create_standard(3, 28*28, 500, 10);
+        ann_.net.set_learning_rate(learn_rate);
+        ann_.net.set_learning_momentum(momentum);
         ann_.Train(max_epochs, epochs_span, desired_error);
-        ann_.Save("1hidd500.conf");
+        ann_.SaveANN("1hidd500.conf");
         ann_.net.create_standard(4, 28*28, 250, 250, 10);
+        ann_.net.set_learning_rate(learn_rate);
+        ann_.net.set_learning_momentum(momentum);
         ann_.Train(max_epochs, epochs_span, desired_error);
-        ann_.Save("2hidd250.conf");
+        ann_.SaveANN("2hidd250.conf");
         ann_.net.create_standard(4, 28*28, 500, 500, 10);
+        ann_.net.set_learning_rate(learn_rate);
+        ann_.net.set_learning_momentum(momentum);
         ann_.Train(max_epochs, epochs_span, desired_error);
-        ann_.Save("2hidd500.conf");
+        ann_.SaveANN("2hidd500.conf");
         ann_.net.create_standard(5, 28*28, 250, 250, 250, 10);
+        ann_.net.set_learning_rate(learn_rate);
+        ann_.net.set_learning_momentum(momentum);
         ann_.Train(max_epochs, epochs_span, desired_error);
-        ann_.Save("1hidd500.conf");
+        ann_.SaveANN("3hidd250.conf");
+
+
+
+
+
+        /////Обучение и сохранение различных конфигрураций
+        unsigned int* layers;
+        for (unsigned int capacity = 10; capacity < 100; capacity+=10) {
+            for (unsigned int num_layers = 3; num_layers < 10 ; ++num_layers) {
+                layers = new unsigned int[num_layers];
+                layers[0] = 28 * 28;
+                for (unsigned int lay_num = 1; lay_num < num_layers - 1; ++lay_num) {
+                    layers[lay_num] = capacity;
+                }
+                layers[num_layers - 1] = 10;
+                ann_.net.create_standard_array(num_layers, layers);
+                ann_.net.set_learning_rate(learn_rate);
+                ann_.net.set_learning_momentum(momentum);
+                ann_.Train(max_epochs, epochs_span, desired_error);
+                std::ostringstream filename_stream;
+                filename_stream << (num_layers - 2) << "hidden" << capacity;
+                ann_.SaveANN(filename_stream.str());
+                delete[] layers;
+            }
+        }
     }
+}
+
+void MainWindow::StopTraining() {
+    ann_.CancelTraining();
 }

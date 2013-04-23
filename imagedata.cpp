@@ -92,7 +92,7 @@ float* ImageData::GetFloatData(float min_val, float max_val) const {
     float* float_data = new float[data_length];
     float scale_factor = (max_val - min_val) / (float)(kMaxValue - kMinValue);
     for (int i = 0; i < data_length; ++i) {
-        float_data[i] = (float)data_[i] * scale_factor;
+        float_data[i] = data_[i] * scale_factor;
     }
     return float_data;
 }

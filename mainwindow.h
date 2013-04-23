@@ -45,11 +45,12 @@ public slots:
     void AdjustTableRows(int num_layers);
     void CreateANN();
     void LoadANN();
-    void LoadTrain();
     void SaveANN();
+    void LoadTrainFromMNIST();
+    void LoadTrainFromFile();
+    void SaveTrainToFile();
     void StartTraining();
-
-
+    void StopTraining();
 };
 
 #endif // MAINWINDOW_H

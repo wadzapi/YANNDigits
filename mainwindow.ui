@@ -409,7 +409,7 @@
         <x>20</x>
         <y>110</y>
         <width>191</width>
-        <height>101</height>
+        <height>211</height>
        </rect>
       </property>
       <property name="horizontalScrollBarPolicy">
@@ -487,7 +487,7 @@
        <rect>
         <x>10</x>
         <y>340</y>
-        <width>461</width>
+        <width>471</width>
         <height>31</height>
        </rect>
       </property>
@@ -760,14 +760,47 @@
        <item>
         <widget class="QPushButton" name="pushButton_11">
          <property name="text">
-          <string>Загрузить обучающую выборку</string>
+          <string>Загрузить выборку из MNIST</string>
          </property>
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="pushButton_13">
+         <property name="text">
+          <string>Открыть выборку из файла</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_12">
+         <property name="text">
+          <string>Сохранить выборку в файл</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="horizontalLayoutWidget_3">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>340</y>
+        <width>471</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
         <widget class="QPushButton" name="pushButton_10">
          <property name="text">
-          <string>Обучить</string>
+          <string>Начать обучение</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_14">
+         <property name="text">
+          <string>Прервать обучение</string>
          </property>
         </widget>
        </item>
