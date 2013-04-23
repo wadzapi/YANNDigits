@@ -161,9 +161,13 @@ QRect ImgFrame::GetBounds() const {
 }
 
 /// Метод получения картинки с обрезанными краями
-QImage ImgFrame::GetCroppedImage() {
-    QImage cropped_image;
-    cropped_image = image_.copy(GetBounds());
-    return cropped_image;
+QImage ImgFrame::GetResizedImage(unsigned int width, unsigned int height, unsigned int border) {
+    QImage resized_image(width, height, QImage::Format_ARGB32);
+    resized_image.fill(background_color_);
+    QImage cropped_image = image_.copy(GetBounds());
+    QPainter painter(&resized_image);
+    cropped_image = cropped_image.scaled(width - 2 * border, height - 2 * border);
+    painter.drawImage(border + 1, border + 1, cropped_image);
+    return resized_image;
 }
 

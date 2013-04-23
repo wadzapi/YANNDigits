@@ -14,7 +14,7 @@ class ImgFrame : public QFrame
 public:
     explicit ImgFrame(QWidget *parent = 0);
     QImage GetImage() const;
-    QImage GetCroppedImage();
+    QImage GetResizedImage(unsigned int width, unsigned int height, unsigned int border);
     void SetImage(const QImage &image);
     void SetPenColor(const QColor &color);
     void SetPenWidth(int width);

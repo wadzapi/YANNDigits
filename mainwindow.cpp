@@ -11,7 +11,7 @@
 #include <QTableWidgetItem>
 
 
-
+unsigned int MainWindow::kNumNeurons = 100;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -77,12 +77,10 @@ void MainWindow::MnistLabelsOpen() {
 
 void MainWindow::Recognize() {
     if (ann_.IsAnnInit()) {
-        QImage frame_image = ui->frame_3->GetCroppedImage();
-        ImageData img_data(28,28);
+        QImage frame_image = ui->frame_3->GetResizedImage(28, 28, 4);
+        frame_image.save("resized.jpg", "JPEG");
+        ImageData img_data(28, 28);
         img_data.Load(frame_image);
-        //ImageData* img_data = mnist_.GetImage(0);
-        //ui->frame_3->SetImage(img_data->GetQImage());
-        //unsigned char recognized = ann_.Recognize(*img_data);
         unsigned char recognized = ann_.Recognize(img_data);
         ui->label_12->setText(QString::number(recognized));
     }
@@ -131,11 +129,13 @@ void MainWindow::AdjustTableRows(int num_layers) {
             item->setFlags(item->flags() & ~Qt::ItemIsEditable);
             table->setItem(i, 0, item);
             item = new QTableWidgetItem();
-            item->setText("20");
+            item->setText(QString::number(kNumNeurons));
             table->setItem(i, 1, item);
         }
         table->item(0, 1)->setText(QString::number(28*28));
+        table->item(0,1)->setFlags(table->item(0,1)->flags() & ~Qt::ItemIsEditable);
         table->item(num_layers - 1, 1)->setText(QString::number(10));
+        table->item(num_layers - 1, 1)->setFlags(table->item(num_layers - 1, 1)->flags() & ~Qt::ItemIsEditable);
         this->update();
     }
 }
@@ -154,6 +154,24 @@ void MainWindow::CreateANN() {
        capacity[i] = value;
     }
     ann_.ConstructANN(layers_num, capacity);
+    ///Задание функции активации
+    switch(ui->comboBox->currentIndex()) {
+    case 0:
+        ann_.net.set_activation_function_hidden(FANN::SIGMOID_SYMMETRIC_STEPWISE);
+        break;
+    case 1:
+        ann_.net.set_activation_function_hidden(FANN::ELLIOT_SYMMETRIC);
+        break;
+    }
+    ///Задание функции ошибки
+    switch(ui->comboBox_2->currentIndex()) {
+    case 0:
+        ann_.net.set_train_error_function(FANN::ERRORFUNC_LINEAR);
+        break;
+    case 1:
+        ann_.net.set_train_error_function(FANN::ERRORFUNC_TANH);
+        break;
+    }
 }
 
 void MainWindow::LoadANN() {
@@ -196,35 +214,11 @@ void MainWindow::StartTraining() {
         unsigned int max_epochs = ui->spinBox_2->value();
         unsigned int epochs_span = ui->spinBox_3->value();
         float desired_error = static_cast<float>(ui->doubleSpinBox_3->value());
-        //ann_.Train(max_epochs, epochs_span, desired_error);
-
-        /////Обучение и сохранение различных конфигрураций
-        ann_.net.create_standard(3, 28*28, 500, 10);
-        ann_.net.set_learning_rate(learn_rate);
-        ann_.net.set_learning_momentum(momentum);
         ann_.Train(max_epochs, epochs_span, desired_error);
-        ann_.SaveANN("1hidd500.conf");
-        ann_.net.create_standard(4, 28*28, 250, 250, 10);
-        ann_.net.set_learning_rate(learn_rate);
-        ann_.net.set_learning_momentum(momentum);
-        ann_.Train(max_epochs, epochs_span, desired_error);
-        ann_.SaveANN("2hidd250.conf");
-        ann_.net.create_standard(4, 28*28, 500, 500, 10);
-        ann_.net.set_learning_rate(learn_rate);
-        ann_.net.set_learning_momentum(momentum);
-        ann_.Train(max_epochs, epochs_span, desired_error);
-        ann_.SaveANN("2hidd500.conf");
-        ann_.net.create_standard(5, 28*28, 250, 250, 250, 10);
-        ann_.net.set_learning_rate(learn_rate);
-        ann_.net.set_learning_momentum(momentum);
-        ann_.Train(max_epochs, epochs_span, desired_error);
-        ann_.SaveANN("3hidd250.conf");
 
 
 
-
-
-        /////Обучение и сохранение различных конфигрураций
+        /*Обучение и сохранение различных конфигрураций
         unsigned int* layers;
         for (unsigned int capacity = 10; capacity < 100; capacity+=10) {
             for (unsigned int num_layers = 3; num_layers < 10 ; ++num_layers) {
@@ -243,7 +237,7 @@ void MainWindow::StartTraining() {
                 ann_.SaveANN(filename_stream.str());
                 delete[] layers;
             }
-        }
+        }*/
     }
 }
 

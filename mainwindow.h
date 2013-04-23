@@ -21,6 +21,7 @@ public:
     ~MainWindow();
     
 private:
+    static unsigned int kNumNeurons;
     void ConfigureUI();
     void initCounter();
     void LoadMnistImage();
@@ -32,9 +33,6 @@ private:
     ANNRecognizer ann_;
     void SetActivationFunc();
     void SetErrorFunc();
-
-
-
 
 public slots:
     void Recognize();

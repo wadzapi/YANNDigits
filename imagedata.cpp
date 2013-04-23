@@ -48,9 +48,8 @@ ImageData::~ImageData() {
 }
 
 void ImageData::Load(QImage &image) {
-    QImage scaled_image;
     /// Масштабирование к необходимому формату
-    scaled_image = image.scaled(width_, height_, Qt::IgnoreAspectRatio);
+    QImage scaled_image = image.scaled(width_, height_, Qt::IgnoreAspectRatio);
     /// Заполнение вектора проходом по строкам массива
     for (int y = 0; y < height_; y++ ) {
         for (int x = 0; x < width_; x++) {
