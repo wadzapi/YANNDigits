@@ -83,6 +83,8 @@ void MainWindow::Recognize() {
         img_data.Load(frame_image);
         unsigned char recognized = ann_.Recognize(img_data);
         ui->label_12->setText(QString::number(recognized));
+    } else {
+        QMessageBox::warning(this, tr("Распознавание невозможно ..."), tr("Распознавание символа невозможно. Нейронная сеть не загружена."), QMessageBox::Ok );
     }
 }
 
@@ -217,7 +219,6 @@ void MainWindow::StartTraining() {
         ann_.Train(max_epochs, epochs_span, desired_error);
 
 
-
         /*Обучение и сохранение различных конфигрураций
         unsigned int* layers;
         for (unsigned int capacity = 10; capacity < 100; capacity+=10) {
@@ -238,7 +239,10 @@ void MainWindow::StartTraining() {
                 delete[] layers;
             }
         }*/
+    } else {
+        QMessageBox::warning(this, tr("Обучение невозможно ..."), tr("Обучение невозможно. Нейронная сеть не загружена."), QMessageBox::Ok );
     }
+
 }
 
 void MainWindow::StopTraining() {

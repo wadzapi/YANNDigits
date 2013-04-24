@@ -29,8 +29,6 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-
-
 win32: LIBS += -L$$PWD/third_party/fann/ -llibfann
 
 INCLUDEPATH += $$PWD/third_party/fann/include
